@@ -84,7 +84,6 @@ public class BSTree<E extends Comparable<? super E>> implements BSTreeADT<E>{
 
 	@Override
 	public Iterator<E> postorderIterator() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
