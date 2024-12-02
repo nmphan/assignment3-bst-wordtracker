@@ -34,7 +34,7 @@ public class BSTreeNode<E> {
 		this.left = left;
 	}
 
-	public void setNext(BSTreeNode<E> right) {
+	public void setRight(BSTreeNode<E> right) {
 		this.right = right;
 	}
 
