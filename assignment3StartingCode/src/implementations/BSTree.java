@@ -3,17 +3,31 @@ package implementations;
 import utilities.BSTreeADT;
 import utilities.Iterator;
 
-public class BSTree<E extends Comparable<? super E>> implements BSTreeADT<E>{
+public class BSTree<E extends Comparable<? super E>> implements BSTreeADT<E> {
 
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
 
+	private BSTreeNode<E> root;
+	private int size;
+
+	public BSTree() {
+		this.root = null;
+		size = 0;
+	}
+
+	public BSTree(E element) {
+		this.root = new BSTreeNode<E>(element, null, null);
+	}
+
 	@Override
 	public BSTreeNode<E> getRoot() throws NullPointerException {
-		// TODO Auto-generated method stub
-		return null;
+		if (isEmpty()) {
+			throw new NullPointerException("The tree is empty.");
+		}
+		return root;
 	}
 
 	@Override
@@ -24,38 +38,84 @@ public class BSTree<E extends Comparable<? super E>> implements BSTreeADT<E>{
 
 	@Override
 	public int size() {
-		// TODO Auto-generated method stub
-		return 0;
+		return size;
 	}
 
 	@Override
 	public boolean isEmpty() {
-		// TODO Auto-generated method stub
-		return false;
+		return root == null;
 	}
 
 	@Override
 	public void clear() {
-		// TODO Auto-generated method stub
-		
+		root = null;
+		size = 0;
 	}
 
 	@Override
 	public boolean contains(E entry) throws NullPointerException {
-		// TODO Auto-generated method stub
-		return false;
+	    if (entry == null) {
+	        throw new NullPointerException("Unable to search for a null value.");
+	    }
+
+	    BSTreeNode<E> current = root;
+	    while (current != null) {
+	        int compareResult = entry.compareTo(current.getElement());
+	        if (compareResult < 0) {
+	            current = current.getLeft();
+	        } else if (compareResult > 0) {
+	            current = current.getRight();
+	        } else {
+	            return true;
+	        }
+	    }
+	    return false;
 	}
 
 	@Override
 	public BSTreeNode<E> search(E entry) throws NullPointerException {
+		if (entry == null) {
+			throw new NullPointerException("Cannot search a null value.");
+		}
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	public boolean add(E newEntry) throws NullPointerException {
-		// TODO Auto-generated method stub
-		return false;
+		if (newEntry == null) {
+			throw new NullPointerException("Cannot add a null value.");
+		}
+
+		if (root == null) {
+			root = new BSTreeNode<E>(newEntry);
+			size++;
+			return true;
+		}
+
+		BSTreeNode<E> current = root;
+		while (true) {
+			int comparison = newEntry.compareTo(current.getElement());
+
+			if (comparison == 0) {
+				return false;
+			} else if (comparison < 0) {
+				if (current.getLeft() == null) {
+					current.setLeft(new BSTreeNode<>(newEntry));
+					size++;
+					return true;
+				}
+				current = current.getLeft();
+			} else {
+				if (current.getRight() == null) {
+					current.setRight(new BSTreeNode<>(newEntry));
+					size++;
+					return true;
+				}
+				current = current.getRight();
+			}
+		}
+
 	}
 
 	@Override
@@ -86,6 +146,5 @@ public class BSTree<E extends Comparable<? super E>> implements BSTreeADT<E>{
 	public Iterator<E> postorderIterator() {
 		return null;
 	}
-
 
 }
