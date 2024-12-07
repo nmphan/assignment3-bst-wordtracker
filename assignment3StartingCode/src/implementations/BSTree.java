@@ -32,8 +32,16 @@ public class BSTree<E extends Comparable<? super E>> implements BSTreeADT<E> {
 
 	@Override
 	public int getHeight() {
-		// TODO Auto-generated method stub
-		return 0;
+		return calculateHeight(root);
+	}
+	
+	private int calculateHeight(BSTreeNode<E> node) {
+		if (node == null) {
+			return 0;
+		}
+		int leftHeight = calculateHeight(node.getLeft());
+	    int rightHeight = calculateHeight(node.getRight());
+	    return 1 + Math.max(leftHeight, rightHeight);
 	}
 
 	@Override
@@ -77,8 +85,19 @@ public class BSTree<E extends Comparable<? super E>> implements BSTreeADT<E> {
 		if (entry == null) {
 			throw new NullPointerException("Cannot search a null value.");
 		}
-		// TODO Auto-generated method stub
-		return null;
+		
+		BSTreeNode<E> current = root;
+	    while (current != null) {
+	        int comparison = entry.compareTo(current.getElement());
+	        if (comparison == 0) {
+	            return current;
+	        } else if (comparison < 0) {
+	            current = current.getLeft();
+	        } else {
+	            current = current.getRight();
+	        }
+	    }
+	    return null;
 	}
 
 	@Override
@@ -120,8 +139,28 @@ public class BSTree<E extends Comparable<? super E>> implements BSTreeADT<E> {
 
 	@Override
 	public BSTreeNode<E> removeMin() {
-		// TODO Auto-generated method stub
-		return null;
+		if (root == null) {
+			return null;
+		}
+		
+		if (root.getLeft() == null) {
+			BSTreeNode<E> minNode = root;
+			root = root.getRight();		
+			size--;
+			return minNode;
+		}
+		
+		BSTreeNode<E> parent = root;
+	    BSTreeNode<E> current = root.getLeft();
+
+	    while (current.getLeft() != null) {
+	        parent = current;
+	        current = current.getLeft();
+	    }
+
+	    parent.setLeft(current.getRight());
+	    size--;
+	    return current;
 	}
 
 	@Override
