@@ -1,5 +1,8 @@
 package implementations;
 
+import java.util.NoSuchElementException;
+import java.util.Stack;
+
 import utilities.BSTreeADT;
 import utilities.Iterator;
 
@@ -165,25 +168,158 @@ public class BSTree<E extends Comparable<? super E>> implements BSTreeADT<E> {
 
 	@Override
 	public BSTreeNode<E> removeMax() {
-		// TODO Auto-generated method stub
-		return null;
+		if (root == null) {
+	        return null;
+	    }
+
+        BSTreeNode<E> parent = null;
+        BSTreeNode<E> current = root;
+
+        while (current.getRight() != null) {
+            parent = current;
+            current = current.getRight();
+        }
+
+        if (parent == null) {
+            root = root.getLeft();
+        } else {
+            parent.setRight(current.getLeft());
+        }
+
+        size--;
+        return current;
 	}
 
 	@Override
 	public Iterator<E> inorderIterator() {
-		// TODO Auto-generated method stub
-		return null;
+	    return new InorderIterator<>(root);
 	}
+	
+	//Adapted from: geeksforgeeks
+	//Source: https://www.geeksforgeeks.org/binary-tree-iterator-for-inorder-traversal/
 
+	public class InorderIterator<E> implements Iterator<E> {
+	    private Stack<BSTreeNode<E>> traversal;
+
+	    public InorderIterator(BSTreeNode<E> root) {
+	        traversal = new Stack<>();
+	        moveLeft(root);
+	    }
+
+	    private void moveLeft(BSTreeNode<E> current) {
+	        while (current != null) {
+	            traversal.push(current);
+	            current = current.getLeft();
+	        }
+	    }
+
+	    @Override
+	    public boolean hasNext() {
+	        return !traversal.isEmpty();
+	    }
+
+	    @Override
+	    public E next() {
+	        if (!hasNext()) {
+	            throw new NoSuchElementException();
+	        }
+
+	        BSTreeNode<E> current = traversal.pop();
+	        if (current.getRight() != null) {
+	            moveLeft(current.getRight());
+	        }
+
+	        return current.getElement();
+	    }
+	}
+	
 	@Override
 	public Iterator<E> preorderIterator() {
-		// TODO Auto-generated method stub
-		return null;
+		return new PreorderIterator<>(root);
 	}
 
+	//Adapted from: geeksforgeeks
+	//Source: https://www.geeksforgeeks.org/iterative-preorder-traversal/
+	 public class PreorderIterator<E> implements Iterator<E> {
+
+	        private Stack<BSTreeNode<E>> stack;
+
+	        public PreorderIterator(BSTreeNode<E> root) {
+	            stack = new Stack<>();
+	            if (root != null) {
+	                stack.push(root);
+	            }
+	        }
+
+	        @Override
+	        public boolean hasNext() {
+	            return !stack.isEmpty();
+	        }
+
+	        @Override
+	        public E next() {
+	            if (!hasNext()) {
+	                throw new NoSuchElementException();
+	            }
+
+	            BSTreeNode<E> currentNode = stack.pop();
+	            if (currentNode.getRight() != null) {
+	                stack.push(currentNode.getRight());
+	            }
+	            if (currentNode.getLeft() != null) {
+	                stack.push(currentNode.getLeft());
+	            }
+
+	            return currentNode.getElement();
+	        }
+	    }
+	
 	@Override
 	public Iterator<E> postorderIterator() {
-		return null;
+		return new PostorderIterator(root);
+	}
+	
+	//Adapted from: geeksforgeeks
+	//Source: https://www.geeksforgeeks.org/iterative-postorder-traversal/
+
+	public class PostorderIterator implements Iterator<E> {
+	    private final Stack<E> stack = new Stack<>();
+
+	    public PostorderIterator(BSTreeNode<E> root) {
+	        if (root != null) {
+	            preparePostorder(root);
+	        }
+	    }
+
+	    private void preparePostorder(BSTreeNode<E> node) {
+	        Stack<BSTreeNode<E>> tempStack = new Stack<>();
+	        tempStack.push(node);
+
+	        while (!tempStack.isEmpty()) {
+	            BSTreeNode<E> current = tempStack.pop();
+	            stack.push(current.getElement());
+
+	            if (current.getLeft() != null) {
+	                tempStack.push(current.getLeft());
+	            }
+	            if (current.getRight() != null) {
+	                tempStack.push(current.getRight());
+	            }
+	        }
+	    }
+
+	    @Override
+	    public boolean hasNext() {
+	        return !stack.isEmpty();
+	    }
+
+	    @Override
+	    public E next() {
+	        if (!hasNext()) {
+	            throw new NoSuchElementException();
+	        }
+	        return stack.pop();
+	    }
 	}
 
 }
