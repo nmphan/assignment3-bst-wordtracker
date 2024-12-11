@@ -1,12 +1,13 @@
 package implementations;
 
+import java.io.Serializable;
 import java.util.NoSuchElementException;
 import java.util.Stack;
 
 import utilities.BSTreeADT;
 import utilities.Iterator;
 
-public class BSTree<E extends Comparable<? super E>> implements BSTreeADT<E> {
+public class BSTree<E extends Comparable<? super E>> implements BSTreeADT<E>, Serializable {
 
 	/**
 	 * 
@@ -287,11 +288,11 @@ public class BSTree<E extends Comparable<? super E>> implements BSTreeADT<E> {
 
 	    public PostorderIterator(BSTreeNode<E> root) {
 	        if (root != null) {
-	            preparePostorder(root);
+	            prePostorder(root);
 	        }
 	    }
 
-	    private void preparePostorder(BSTreeNode<E> node) {
+	    private void prePostorder(BSTreeNode<E> node) {
 	        Stack<BSTreeNode<E>> tempStack = new Stack<>();
 	        tempStack.push(node);
 
