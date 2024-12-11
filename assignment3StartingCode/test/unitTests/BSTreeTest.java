@@ -94,7 +94,7 @@ public class BSTreeTest {
 
 		assertEquals("Failed to add item correctly to root.", expected, actual);
 		assertEquals("Size of tree should be ", 1, newTree.size());
-		assertEquals("Height of tree should be ", 1, tree.getHeight());
+		assertEquals("Height of tree should be ", 1, newTree.getHeight());
 	}
 
 	/**
