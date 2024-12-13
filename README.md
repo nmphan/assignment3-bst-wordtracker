@@ -16,9 +16,9 @@
 
 ***USAGE***
 - Open Command Prompt or Terminal
-- Redirect to the project location on your computer, for example:
+- Redirect to the location on your computer where the WordTracker.jar is located, for example:
 
-		cd C:\Downloads\assignment2-adt-xml
+		cd C:\Downloads\assignment3-bst-wordtracker/assignment3StartingCode
 
 - Type the command line based on this format
 
