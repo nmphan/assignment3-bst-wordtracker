@@ -142,7 +142,8 @@ public class WordTracker implements Serializable {
 		}
 
 		for (Map.Entry<String, List<Integer>> entry : metadata.getOccurrences().entrySet()) {
-			sb.append(" found in file: ").append(entry.getKey().replace("res/", ""));
+			String fileName = entry.getKey().replaceFirst("^res[\\\\/]", "");
+			sb.append(" found in file: ").append(fileName);
 			if (includeLines) {
 				String lineNumbers = entry.getValue().toString().replace("[", "").replace("]", "");
 				sb.append(" on lines: ").append(lineNumbers).append(",");
