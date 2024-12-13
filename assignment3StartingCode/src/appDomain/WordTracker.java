@@ -20,7 +20,7 @@ public class WordTracker implements Serializable {
 			return;
 		}
 
-		String inputFile = args[0];
+		String inputFile = "res/" + args[0];
 		String option = args[1];
 		String outputFile = args.length == 4 && args[2].equals("-f") ? args[3] : null;
 
