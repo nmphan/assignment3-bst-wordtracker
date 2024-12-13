@@ -1,7 +1,8 @@
-## INSTRUCTIONS FOR INSTALLING AND USING XML PARSER PROGRAM
+## INSTRUCTIONS FOR INSTALLING AND USING WORD TRACKER PROGRAM
 
 ***DESCRIPTION***
-- This program includes 2 ADTs for stack and queue, and the utility classes of an array list, a double linked list, a stack, and a queue. The program can read and confirm if the XML files are properly formatted with these utility classes.
+- This program includes an ADT for a BST, Iterators to be implemented as a BST.
+- This program will read text files, collects and stores all the unique words it finds in those files.
 
 ***REQUIREMENTS***
 - Java: JDK 8 or higher.
