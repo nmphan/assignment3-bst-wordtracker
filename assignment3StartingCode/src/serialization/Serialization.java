@@ -11,8 +11,15 @@ import implementations.BSTree;
 //Adapted from: geeksforgeeks
 //Source: https://www.geeksforgeeks.org/serialization-in-java
 
+
 public class Serialization {
-	
+	/**
+     * Saves the given BSTree to a file using object serialization.
+     * 
+     * @param <E>      The type of elements in the BSTree.
+     * @param t        The BSTree to be saved.
+     * @param fileName The name of the file to save the BSTree to.
+     */
 	public static <E extends Comparable<? super E>> void saveToFile(BSTree<E> t,String fileName) {
         try {
         	FileOutputStream file = new FileOutputStream(fileName);
@@ -24,7 +31,13 @@ public class Serialization {
         }
     }
 	
-	
+	/**
+	 * Loads a BSTree from the specified file using object deserialization.
+	 * 
+	 * @param <E>      The type of elements in the BSTree.
+	 * @param fileName The file containing the serialized BSTree.
+	 * @return The deserialized BSTree object, or a new empty BSTree if an error occurs.
+	 */
 	@SuppressWarnings("unchecked")
 	public static <E extends Comparable<? super E>> BSTree<E> loadFromFile(File fileName) {
         try {
