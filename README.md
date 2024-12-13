@@ -31,6 +31,6 @@
     - -po prints in alphabetic order all words, along with the corresponding list of files, line numbers in which the word occur, and the frequency of occurrence of the words.
   + <output.txt> is an optional argument to redirect the report in the previous step to the path and filename specified in.
 
-- The command at the beginning "java -jar WordTracker.jar" and "-pf/-pl/-po -f <output.txt>" must be maintained unchanged.
+- The command at the beginning "java -jar WordTracker.jar" must be maintained unchanged.
 - For the input.txt, it is open to take any txt file.
 - Pay attention to spaces in the command, as incorrect spacing will cause errors.
