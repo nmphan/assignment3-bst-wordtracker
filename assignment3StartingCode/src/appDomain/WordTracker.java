@@ -6,18 +6,17 @@ import implementations.BSTree;
 import serialization.Serialization;
 import utilities.Iterator;
 
-	/**
-	 * A WordTracker application that tracks and processes occurrences of words in text files.
-	 *
-	 * <p>
-	 * This class uses a Binary Search Tree (BST) to store metadata about words, including
-	 * the files and line numbers where they occur. It supports commands for processing
-	 * input files, saving/loading data from a repository, and outputting results.
-	 * </p>
-	 */
+/**
+ * A WordTracker application that tracks and processes occurrences of words in text files.
+ *
+ * <p>
+ * This class uses a Binary Search Tree (BST) to store metadata about words, including
+ * the files and line numbers where they occur. It supports commands for processing
+ * input files, saving/loading data from a repository, and outputting results.
+ * </p>
+ */
 public class WordTracker implements Serializable {
-	
-	
+
 	private static final long serialVersionUID = 245030236857842948L;
 	private static final String REPOSITORY_FILE = "repository.ser";
 
@@ -33,13 +32,24 @@ public class WordTracker implements Serializable {
 			System.out.println("Usage: java -jar WordTracker.jar <input.txt> -pf/-pl/-po [-f <output.txt>]");
 			return;
 		}
+		
+		// Base directory for file paths
+	    String baseDir = "res";
+	    String repositoryFile = baseDir + File.separator + "repository.ser";
 
-		String inputFile = "res/" + args[0];
+	    String inputFile = baseDir + File.separator + args[0];
 		String option = args[1];
-		String outputFile = args.length == 4 && args[2].equals("-f") ? args[3] : null;
-
+		String outputFile = (args.length == 4 && args[2].equals("-f")) ? baseDir + File.separator + args[3] : null;
+		
 		// Load or create repository
-		BSTree<WordMetadata> tree = Serialization.loadFromFile(new File(REPOSITORY_FILE));
+		File repoFile = new File(repositoryFile);
+	    BSTree<WordMetadata> tree;
+	    if (repoFile.exists()) {
+	        tree = Serialization.loadFromFile(repoFile);
+	    } else {
+	        System.out.println("Repository file not found. Creating a new repository.");
+	        tree = new BSTree<>();
+	    }
 
 		// Process input file
 		processFile(tree, inputFile);
@@ -151,6 +161,7 @@ public class WordTracker implements Serializable {
 		}
 		return null;
 	}
+	
 
 	/**
      * Formats metadata for output.
@@ -167,7 +178,8 @@ public class WordTracker implements Serializable {
 		}
 
 		for (Map.Entry<String, List<Integer>> entry : metadata.getOccurrences().entrySet()) {
-			sb.append(" found in file: ").append(entry.getKey().replace("res/", ""));
+			String fileName = entry.getKey().replaceFirst("^res[\\\\/]", "");
+			sb.append(" found in file: ").append(fileName);
 			if (includeLines) {
 				String lineNumbers = entry.getValue().toString().replace("[", "").replace("]", "");
 				sb.append(" on lines: ").append(lineNumbers).append(",");
