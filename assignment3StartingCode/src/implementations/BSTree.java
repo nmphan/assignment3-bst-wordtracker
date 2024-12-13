@@ -7,21 +7,31 @@ import java.util.Stack;
 import utilities.BSTreeADT;
 import utilities.Iterator;
 
+/**
+ * Binary Search Tree (BST) implementation for storing elements in a hierarchical structure.
+ * 
+ * @param <E> Type of elements stored in the tree, must implement Comparable.
+ */
 public class BSTree<E extends Comparable<? super E>> implements BSTreeADT<E>, Serializable {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 1L;
 
 	private BSTreeNode<E> root;
 	private int size;
-
+	
+	/**
+     * Default constructor. Initializes an empty binary search tree.
+     */
 	public BSTree() {
 		this.root = null;
 		size = 0;
 	}
 
+	/**
+     * Constructor to initialize the tree with a single element as the root.
+     * 
+     * @param element the root element of the tree.
+     */
 	public BSTree(E element) {
 		this.root = new BSTreeNode<E>(element, null, null);
 	}
