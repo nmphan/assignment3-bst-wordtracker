@@ -6,7 +6,12 @@ import implementations.BSTree;
 import serialization.Serialization;
 import utilities.Iterator;
 
-public class WordTracker {
+public class WordTracker implements Serializable {
+	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 245030236857842948L;
 	private static final String REPOSITORY_FILE = "repository.ser";
 
 	public static void main(String[] args) throws IOException, ClassNotFoundException {
@@ -27,6 +32,7 @@ public class WordTracker {
 		Serialization.saveToFile(tree, REPOSITORY_FILE);
 
 		// Output results
+		boolean hasFiles = "-pf".equals(option) || "-pl".equals(option) || "-po".equals(option);
 		boolean hasLines = "-pl".equals(option) || "-po".equals(option);
 		boolean hasTotal = "-po".equals(option);
 
@@ -35,10 +41,10 @@ public class WordTracker {
 		PrintStream fileStream = outputFile != null ? new PrintStream(new FileOutputStream(outputFile)) : null;
 
 		if (fileStream != null) {
-			outputMetadataToFile(tree, fileStream, hasLines, hasTotal);
-			outputMetadataToFile(tree, System.out, hasLines, hasTotal);
+			outputMetadataToFile(tree, fileStream, option, hasLines, hasTotal);
+			outputMetadataToFile(tree, System.out, option, hasLines, hasTotal);
 		} else {
-			outputMetadataToFile(tree, System.out, hasLines, hasTotal);
+			outputMetadataToFile(tree, System.out, option, hasLines, hasTotal);
 		}
 
 	}
@@ -98,7 +104,7 @@ public class WordTracker {
 		return null;
 	}
 
-	private static String formatMetadata(WordMetadata metadata, boolean includeLines, boolean includeFrequency) {
+	private static String formatMetadata(String option, WordMetadata metadata, boolean includeLines, boolean includeFrequency) {		
 		StringBuilder sb = new StringBuilder("Key : ===" + metadata.getWord() + "=== ");
 		if (includeFrequency) {
 			sb.append("number of entries: ").append(metadata.getTotal());
@@ -114,12 +120,22 @@ public class WordTracker {
 		return sb.toString();
 	}
 
-	private static void outputMetadataToFile(BSTree<WordMetadata> tree, PrintStream out, boolean hasLines,
+	private static void outputMetadataToFile(BSTree<WordMetadata> tree, PrintStream out, String option, boolean hasLines,
 			boolean hasTotal) {
+		if (option.equals("-pf")) {
+			System.out.println("Writing pf format");
+		}
+		if (option.equals("-pl")) {
+			System.out.println("Writing pl format");
+		}
+		if (option.equals("-po")) {
+			System.out.println("Writing po format");
+		}
+		
 		Iterator<WordMetadata> iterator = tree.inorderIterator();
 		while (iterator.hasNext()) {
 			WordMetadata metadata = iterator.next();
-			out.println(formatMetadata(metadata, hasLines, hasTotal));
+			out.println(formatMetadata(option, metadata, hasLines, hasTotal));
 		}
 	}
 
