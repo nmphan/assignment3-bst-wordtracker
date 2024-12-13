@@ -32,7 +32,6 @@ public class WordTracker implements Serializable {
 		Serialization.saveToFile(tree, REPOSITORY_FILE);
 
 		// Output results
-		boolean hasFiles = "-pf".equals(option) || "-pl".equals(option) || "-po".equals(option);
 		boolean hasLines = "-pl".equals(option) || "-po".equals(option);
 		boolean hasTotal = "-po".equals(option);
 
@@ -41,10 +40,30 @@ public class WordTracker implements Serializable {
 		PrintStream fileStream = outputFile != null ? new PrintStream(new FileOutputStream(outputFile)) : null;
 
 		if (fileStream != null) {
-			outputMetadataToFile(tree, fileStream, option, hasLines, hasTotal);
-			outputMetadataToFile(tree, System.out, option, hasLines, hasTotal);
+			if (option.equals("-pf")) {
+				System.out.println("Writing pf format");
+			}
+			if (option.equals("-pl")) {
+				System.out.println("Writing pl format");
+			}
+			if (option.equals("-po")) {
+				System.out.println("Writing po format");
+			}
+			outputMetadataToFile(tree, fileStream, hasLines, hasTotal);
+			outputMetadataToFile(tree, System.out, hasLines, hasTotal);
+			System.out.println("\nExporting file to: " + outputFile);
 		} else {
-			outputMetadataToFile(tree, System.out, option, hasLines, hasTotal);
+			if (option.equals("-pf")) {
+				System.out.println("Writing pf format");
+			}
+			if (option.equals("-pl")) {
+				System.out.println("Writing pl format");
+			}
+			if (option.equals("-po")) {
+				System.out.println("Writing po format");
+			}
+			outputMetadataToFile(tree, System.out, hasLines, hasTotal);
+			System.out.println("\nNot exporting file");
 		}
 
 	}
@@ -71,8 +90,9 @@ public class WordTracker implements Serializable {
 				lineNumber++;
 
 				String normalizedLine = line.replaceAll("'", "");
+	            normalizedLine = normalizedLine.replaceAll("[^a-zA-Z0-9\\s]", "");
 
-				String[] words = normalizedLine.split("\\W+"); // Split by non-word characters
+				String[] words = normalizedLine.split("\\s+");
 				for (String word : words) {
 					if (!word.isEmpty()) {
 						String normalizedWord = word;
@@ -104,14 +124,14 @@ public class WordTracker implements Serializable {
 		return null;
 	}
 
-	private static String formatMetadata(String option, WordMetadata metadata, boolean includeLines, boolean includeFrequency) {		
+	private static String formatMetadata(WordMetadata metadata, boolean includeLines, boolean includeFrequency) {		
 		StringBuilder sb = new StringBuilder("Key : ===" + metadata.getWord() + "=== ");
 		if (includeFrequency) {
 			sb.append("number of entries: ").append(metadata.getTotal());
 		}
 
 		for (Map.Entry<String, List<Integer>> entry : metadata.getOccurrences().entrySet()) {
-			sb.append(" found in file: ").append(entry.getKey());
+			sb.append(" found in file: ").append(entry.getKey().replace("res/", ""));
 			if (includeLines) {
 				String lineNumbers = entry.getValue().toString().replace("[", "").replace("]", "");
 				sb.append(" on lines: ").append(lineNumbers).append(",");
@@ -120,23 +140,13 @@ public class WordTracker implements Serializable {
 		return sb.toString();
 	}
 
-	private static void outputMetadataToFile(BSTree<WordMetadata> tree, PrintStream out, String option, boolean hasLines,
-			boolean hasTotal) {
-		if (option.equals("-pf")) {
-			System.out.println("Writing pf format");
-		}
-		if (option.equals("-pl")) {
-			System.out.println("Writing pl format");
-		}
-		if (option.equals("-po")) {
-			System.out.println("Writing po format");
-		}
-		
+	private static void outputMetadataToFile(BSTree<WordMetadata> tree, PrintStream out, boolean hasLines,
+			boolean hasTotal) {		
 		Iterator<WordMetadata> iterator = tree.inorderIterator();
 		while (iterator.hasNext()) {
 			WordMetadata metadata = iterator.next();
-			out.println(formatMetadata(option, metadata, hasLines, hasTotal));
+			out.println(formatMetadata(metadata, hasLines, hasTotal));
 		}
+		
 	}
-
 }
