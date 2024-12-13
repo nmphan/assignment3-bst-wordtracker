@@ -31,10 +31,6 @@
     - -po prints in alphabetic order all words, along with the corresponding list of files, line numbers in which the word occur, and the frequency of occurrence of the words.
   + <output.txt> is an optional argument to redirect the report in the previous step to the path and filename specified in.
 
-- Replace file_name with the XML file you want to process (e.g., sample1.xml).
-- The command at the beginning "java -jar Parser.jar" must be maintained unchanged, for example:
-
-		java -jar Parser.jar sample1.xml
-
-- Ensure that the "java -jar Parser.jar" part of the command is unchanged.
+- The command at the beginning "java -jar WordTracker.jar" and "-pf/-pl/-po -f <output.txt>" must be maintained unchanged.
+- For the input.txt, it is open to take any txt file.
 - Pay attention to spaces in the command, as incorrect spacing will cause errors.
