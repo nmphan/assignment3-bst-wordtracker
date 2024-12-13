@@ -19,13 +19,24 @@ public class WordTracker implements Serializable {
 			System.out.println("Usage: java -jar WordTracker.jar <input.txt> -pf/-pl/-po [-f <output.txt>]");
 			return;
 		}
+		
+		// Base directory for file paths
+	    String baseDir = "res";
+	    String repositoryFile = baseDir + File.separator + "repository.ser";
 
-		String inputFile = "res/" + args[0];
+	    String inputFile = baseDir + File.separator + args[0];
 		String option = args[1];
-		String outputFile = args.length == 4 && args[2].equals("-f") ? args[3] : null;
-
+		String outputFile = (args.length == 4 && args[2].equals("-f")) ? baseDir + File.separator + args[3] : null;
+		
 		// Load or create repository
-		BSTree<WordMetadata> tree = Serialization.loadFromFile(new File(REPOSITORY_FILE));
+		File repoFile = new File(repositoryFile);
+	    BSTree<WordMetadata> tree;
+	    if (repoFile.exists()) {
+	        tree = Serialization.loadFromFile(repoFile);
+	    } else {
+	        System.out.println("Repository file not found. Creating a new repository.");
+	        tree = new BSTree<>();
+	    }
 
 		// Process input file
 		processFile(tree, inputFile);
