@@ -26,9 +26,9 @@
   
   + <input.txt> is the path and filename of the text file to be processed by the WordTracker program.
   + There are three mutually exclusive options at the command line:
-    • -pf prints in alphabetic order all words, along with the corresponding list of files in which the words occur.
-    • -pl prints in alphabetic order all words, along with the corresponding list of files and line numbers in which the word occur.
-    • -po prints in alphabetic order all words, along with the corresponding list of files, line numbers in which the word occur, and the frequency of occurrence of the words.
+    - -pf prints in alphabetic order all words, along with the corresponding list of files in which the words occur.
+    - -pl prints in alphabetic order all words, along with the corresponding list of files and line numbers in which the word occur.
+    - -po prints in alphabetic order all words, along with the corresponding list of files, line numbers in which the word occur, and the frequency of occurrence of the words.
   + <output.txt> is an optional argument to redirect the report in the previous step to the path and filename specified in.
 
 - Replace file_name with the XML file you want to process (e.g., sample1.xml).
