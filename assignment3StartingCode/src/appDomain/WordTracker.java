@@ -156,18 +156,18 @@ public class WordTracker {
 	/**
 	 * Formats information for output.
 	 * 
-	 * @param information	The information to format.
-	 * @param hasTotal     	Whether to include line numbers.
+	 * @param info	The information to format.
+	 * @param hasLines     	Whether to include line numbers.
 	 * @param hasTotal 		Whether to include word counts.
 	 * @return A formatted string representing the information.
 	 */
-	private static String formatOutput(WordInfo word, boolean hasLines, boolean hasTotal) {
-		StringBuilder sb = new StringBuilder("Key : ===" + word.getWord() + "=== ");
+	private static String formatOutput(WordInfo info, boolean hasLines, boolean hasTotal) {
+		StringBuilder sb = new StringBuilder("Key : ===" + info.getWord() + "=== ");
 		if (hasTotal) {
-			sb.append("number of entries: ").append(word.getTotal());
+			sb.append("number of entries: ").append(info.getTotal());
 		}
 
-		for (Map.Entry<String, List<Integer>> entry : word.getEntries().entrySet()) {
+		for (Map.Entry<String, List<Integer>> entry : info.getEntries().entrySet()) {
 			sb.append(" found in file: ").append(entry.getKey());
 			if (hasLines) {
 				String lineNumbers = entry.getValue().toString().replace("[", "").replace("]", "");
