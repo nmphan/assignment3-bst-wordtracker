@@ -7,19 +7,15 @@ import serialization.Serialization;
 import utilities.Iterator;
 
 /**
- * A WordTracker application that tracks and processes occurrences of words in text files.
+ * A WordTracker application that tracks and processes entries of words in text files.
  *
  * <p>
- * This class uses a Binary Search Tree (BST) to store metadata about words, including
+ * This class uses a Binary Search Tree (BST) to store information about words, including
  * the files and line numbers where they occur. It supports commands for processing
  * input files, saving/loading data from a repository, and outputting results.
  * </p>
  */
-public class WordTracker implements Serializable {
-
-	private static final long serialVersionUID = 245030236857842948L;
-	private static final String REPOSITORY_FILE = "repository.ser";
-
+public class WordTracker {
 	/**
      * Entry point for the WordTracker application.
      * 
@@ -32,37 +28,37 @@ public class WordTracker implements Serializable {
 			System.out.println("Usage: java -jar WordTracker.jar <input.txt> -pf/-pl/-po [-f <output.txt>]");
 			return;
 		}
-		
-		// Base directory for file paths
+ 
+	    // Base directory for file paths
 	    String baseDir = "res";
 	    String repositoryFile = baseDir + File.separator + "repository.ser";
-
+ 
+	    // Adjust input file and output file paths
 	    String inputFile = baseDir + File.separator + args[0];
-		String option = args[1];
-		String outputFile = (args.length == 4 && args[2].equals("-f")) ? baseDir + File.separator + args[3] : null;
+	    String option = args[1];
+	    String outputFile = (args.length == 4 && args[2].equals("-f")) ? baseDir + File.separator + args[3] : null;
 		
-		// Load or create repository
-		File repoFile = new File(repositoryFile);
-	    BSTree<WordMetadata> tree;
+	    // Load or create repository
+	    File repoFile = new File(repositoryFile);
+	    BSTree<WordInfo> tree;
 	    if (repoFile.exists()) {
 	        tree = Serialization.loadFromFile(repoFile);
 	    } else {
 	        System.out.println("Repository file not found. Creating a new repository.");
 	        tree = new BSTree<>();
 	    }
-
+ 
 		// Process input file
 		processFile(tree, inputFile);
-		Serialization.saveToFile(tree, REPOSITORY_FILE);
-
+		Serialization.saveToFile(tree, repositoryFile);
+ 
 		// Output results
 		boolean hasLines = "-pl".equals(option) || "-po".equals(option);
 		boolean hasTotal = "-po".equals(option);
-
+ 
 		// Create a PrintStream to output to file if specified, otherwise use System.out
-		// (console)
 		PrintStream fileStream = outputFile != null ? new PrintStream(new FileOutputStream(outputFile)) : null;
-
+		
 		if (fileStream != null) {
 			if (option.equals("-pf")) {
 				System.out.println("Writing pf format");
@@ -73,8 +69,8 @@ public class WordTracker implements Serializable {
 			if (option.equals("-po")) {
 				System.out.println("Writing po format");
 			}
-			outputMetadataToFile(tree, fileStream, hasLines, hasTotal);
-			outputMetadataToFile(tree, System.out, hasLines, hasTotal);
+			outputToFile(tree, fileStream, hasLines, hasTotal);
+			outputToFile(tree, System.out, hasLines, hasTotal);
 			System.out.println("\nExporting file to: " + outputFile);
 		} else {
 			if (option.equals("-pf")) {
@@ -86,33 +82,32 @@ public class WordTracker implements Serializable {
 			if (option.equals("-po")) {
 				System.out.println("Writing po format");
 			}
-			outputMetadataToFile(tree, System.out, hasLines, hasTotal);
+			outputToFile(tree, System.out, hasLines, hasTotal);
 			System.out.println("\nNot exporting file");
 		}
-
+ 
 	}
 
 	/**
-     * Processes the input file and updates the word metadata in the tree.
+     * Processes the input file and updates the word information in the tree.
      * 
-     * @param tree      The BST storing word metadata.
+     * @param tree      The BST storing word information.
      * @param inputFile The input file to process.
      * @throws IOException If an error occurs while reading the file.
      */
-	private static void processFile(BSTree<WordMetadata> tree, String inputFile) throws IOException {
-		// Remove any existing occurrences from the input file
-		Iterator<WordMetadata> iterator = tree.inorderIterator();
-		List<WordMetadata> toUpdate = new ArrayList<>();
+	private static void processFile(BSTree<WordInfo> tree, String inputFile) throws IOException {
+		// Remove any existing entries from the input file
+		Iterator<WordInfo> iterator = tree.inorderIterator();
+		List<WordInfo> toUpdate = new ArrayList<>();
 
 		while (iterator.hasNext()) {
-			WordMetadata metadata = iterator.next();
-			if (metadata.getOccurrences().containsKey(inputFile)) {
-				metadata.removeOccurrencesFromFile(inputFile);
-				toUpdate.add(metadata);
+			WordInfo info = iterator.next();
+			if (info.getEntries().containsKey(inputFile)) {
+				info.removeEntriesFromFile(inputFile);
+				toUpdate.add(info);
 			}
 		}
 
-		// Reprocess the file and update the tree
 		try (Scanner scanner = new Scanner(new File(inputFile))) {
 			int lineNumber = 0;
 
@@ -121,21 +116,20 @@ public class WordTracker implements Serializable {
 				lineNumber++;
 
 				String normalizedLine = line.replaceAll("'", "");
-	            normalizedLine = normalizedLine.replaceAll("[^a-zA-Z0-9\\s]", "");
 
-				String[] words = normalizedLine.split("\\s+");
+				String[] words = normalizedLine.split("\\W+"); //
 				for (String word : words) {
 					if (!word.isEmpty()) {
 						String normalizedWord = word.toLowerCase();
 
-						WordMetadata newMetadata = new WordMetadata(normalizedWord);
-						newMetadata.addOccurrence(inputFile, lineNumber);
+						WordInfo newInfo = new WordInfo(normalizedWord);
+						newInfo.addEntries(inputFile, lineNumber);
 
-						WordMetadata existingMetadata = findInTree(tree, normalizedWord);
-						if (existingMetadata != null) {
-							existingMetadata.merge(newMetadata);
+						WordInfo existingInfo = findInTree(tree, normalizedWord);
+						if (existingInfo != null) {
+							existingInfo.merge(newInfo);
 						} else {
-							tree.add(newMetadata);
+							tree.add(newInfo);
 						}
 					}
 				}
@@ -145,41 +139,40 @@ public class WordTracker implements Serializable {
 	}
 
 	/**
-     * Finds metadata for a specific word in the tree.
+     * Finds information for a specific word in the tree.
      * 
-     * @param tree The BST storing word metadata.
+     * @param tree The BST storing word information.
      * @param word The word to find.
-     * @return The corresponding WordMetadata object, or null if not found.
+     * @return The corresponding Wordinformation object, or null if not found.
      */
-	private static WordMetadata findInTree(BSTree<WordMetadata> tree, String word) {
-		Iterator<WordMetadata> iterator = tree.inorderIterator();
+	private static WordInfo findInTree(BSTree<WordInfo> tree, String word) {
+		Iterator<WordInfo> iterator = tree.inorderIterator();
 		while (iterator.hasNext()) {
-			WordMetadata metadata = iterator.next();
-			if (metadata.getWord().equals(word)) {
-				return metadata;
+			WordInfo info = iterator.next();
+			if (info.getWord().equals(word)) {
+				return info;
 			}
 		}
 		return null;
 	}
-	
 
+	
 	/**
-     * Formats metadata for output.
+     * Formats information for output.
      * 
-     * @param metadata       The metadata to format.
+     * @param information       The information to format.
      * @param includeLines   Whether to include line numbers.
      * @param includeFrequency Whether to include frequency counts.
-     * @return A formatted string representing the metadata.
+     * @return A formatted string representing the information.
      */
-	private static String formatMetadata(WordMetadata metadata, boolean includeLines, boolean includeFrequency) {		
-		StringBuilder sb = new StringBuilder("Key : ===" + metadata.getWord() + "=== ");
+	private static String formatOutput(WordInfo word, boolean includeLines, boolean includeFrequency) {
+		StringBuilder sb = new StringBuilder("Key : ===" + word.getWord() + "=== ");
 		if (includeFrequency) {
-			sb.append("number of entries: ").append(metadata.getTotal());
+			sb.append("number of entries: ").append(word.getTotal());
 		}
 
-		for (Map.Entry<String, List<Integer>> entry : metadata.getOccurrences().entrySet()) {
-			String fileName = entry.getKey().replaceFirst("^res[\\\\/]", "");
-			sb.append(" found in file: ").append(fileName);
+		for (Map.Entry<String, List<Integer>> entry : word.getEntries().entrySet()) {
+			sb.append(" found in file: ").append(entry.getKey());
 			if (includeLines) {
 				String lineNumbers = entry.getValue().toString().replace("[", "").replace("]", "");
 				sb.append(" on lines: ").append(lineNumbers).append(",");
@@ -187,22 +180,22 @@ public class WordTracker implements Serializable {
 		}
 		return sb.toString();
 	}
-
+	
 	/**
-     * Outputs word metadata to the specified PrintStream.
+     * Outputs word information to the specified PrintStream.
      * 
-     * @param tree      The BST storing word metadata.
+     * @param tree      The BST storing word information.
      * @param out       The PrintStream to write output to.
      * @param hasLines  Whether to include line numbers in the output.
-     * @param hasTotal  Whether to include total occurrences in the output.
+     * @param hasTotal  Whether to include total entries in the output.
      */
-	private static void outputMetadataToFile(BSTree<WordMetadata> tree, PrintStream out, boolean hasLines,
-			boolean hasTotal) {		
-		Iterator<WordMetadata> iterator = tree.inorderIterator();
+
+	private static void outputToFile(BSTree<WordInfo> tree, PrintStream out, boolean hasLines, boolean hasTotal) {
+		Iterator<WordInfo> iterator = tree.inorderIterator();
 		while (iterator.hasNext()) {
-			WordMetadata metadata = iterator.next();
-			out.println(formatMetadata(metadata, hasLines, hasTotal));
+			WordInfo info = iterator.next();
+			out.println(formatOutput(info, hasLines, hasTotal));
 		}
-		
 	}
+
 }

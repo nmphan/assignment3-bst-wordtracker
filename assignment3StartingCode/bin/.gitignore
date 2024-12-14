@@ -1,3 +1,5 @@
 /appDomain/
-/serialization/
 /implementations/
+/serialization/
+/unitTests/
+/utilities/
