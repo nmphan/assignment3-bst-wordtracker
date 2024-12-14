@@ -126,7 +126,7 @@ public class WordTracker implements Serializable {
 				String[] words = normalizedLine.split("\\s+");
 				for (String word : words) {
 					if (!word.isEmpty()) {
-						String normalizedWord = word;
+						String normalizedWord = word.toLowerCase();
 
 						WordMetadata newMetadata = new WordMetadata(normalizedWord);
 						newMetadata.addOccurrence(inputFile, lineNumber);
